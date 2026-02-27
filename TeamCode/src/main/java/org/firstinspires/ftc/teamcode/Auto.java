@@ -2,7 +2,11 @@ package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.drawOnlyCurrent;
 
+import com.bylazar.configurables.PanelsConfigurables;
+import com.bylazar.telemetry.PanelsTelemetry;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.Pose;
+import com.pedropathing.util.PoseHistory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import com.qualcomm.robotcore.hardware.AnalogInput;
@@ -16,6 +20,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import org.firstinspires.ftc.teamcode.BotConfig;
 import org.firstinspires.ftc.teamcode.Launcher;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 
 public abstract class Auto extends LinearOpMode {
@@ -24,20 +29,23 @@ public abstract class Auto extends LinearOpMode {
     public Follower follower;
     public Intake intake;
     public Launcher launcher;
+
     
     /**
      * Initialize classes used by autos
      */
     protected void Initialize() {
         // Create robot component classes
-        // Add, remove, modify depending on how your robot works
         intake = new Intake(this);
         launcher = new Launcher(this);
 
+        // Assign needed variables
+        follower = Constants.createFollower(hardwareMap);
+
         // Run class initialization funcs
 
-
         // Let the user know when initialization is done
+        telemetry.addLine("Fully initialized! Press start to begin auto.");
         telemetry.update();
     }
 
@@ -68,7 +76,6 @@ public abstract class Auto extends LinearOpMode {
             // Add, remove, modify depending on how your robot works
             launcher.process();
             follower.update();
-            drawOnlyCurrent();
 
             // Loop telemetry; updates constantly
 

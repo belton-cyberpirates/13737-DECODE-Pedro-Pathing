@@ -37,8 +37,7 @@ public class BotConfig {
 
   public static final int LAUNCHER_DROP_VELOCITY = 300;
   public static final int LAUNCHER_PASSIVE_VELOCITY = 1000;
-  public static final int LAUNCHER_SAB_VELOCITY = 900;
-  public static final int LAUNCHER_VELOCITY = 1300;
+  public static final int LAUNCHER_VELOCITY = 1325;
   public static final int LAUNCHER_FAR_VELOCITY = 1600;
   
   public static final double LIGHT_GREEN = 0.472;
@@ -50,7 +49,7 @@ public class BotConfig {
   ** AUTO CALIBRATION CONSTANTS
   *****************************************************************************/
   public static final int AUTO_DRIVE_VELOCITY = 1000;
-  public static final int AUTO_PUSHER_VELOCITY = 700;
+  public static final int AUTO_PUSHER_VELOCITY = 600;
   public static final int AUTO_INTAKE_VELOCITY = -2500;
   public static final int AUTO_LAUNCHER_VELOCITY = 1300;
   // ---------------------------------------------------------------------------

@@ -17,6 +17,6 @@ public class FollowPath extends Action {
     }
 
     public boolean isDone() {
-        return auto.follower.getCurrentPath().isAtParametricEnd();
+        return auto.follower.atParametricEnd();
     }
 }

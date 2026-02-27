@@ -18,6 +18,6 @@ public class SetStartingPose extends Action {
     }
 
     public boolean isDone() {
-        return auto.follower.getCurrentPath().isAtParametricEnd();
+        return true;
     }
 }
