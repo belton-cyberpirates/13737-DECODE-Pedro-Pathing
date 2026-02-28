@@ -4,11 +4,11 @@ package org.firstinspires.ftc.teamcode;
 import com.pedropathing.geometry.Pose;
 
 
-public class SetStartingPose extends Action {
-    Auto auto;
+public class ASSetStartingPose extends AS_Action {
+    ASAuto auto;
     Pose pose;
 
-    public SetStartingPose(Auto auto, Pose pose) {
+    public ASSetStartingPose(ASAuto auto, Pose pose) {
         this.auto = auto;
         this.pose = pose;
     }

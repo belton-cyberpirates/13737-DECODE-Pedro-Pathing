@@ -3,11 +3,11 @@ package org.firstinspires.ftc.teamcode;
 
 import com.pedropathing.paths.PathChain;
 
-public class FollowPath extends Action {
-    Auto auto;
+public class ASFollowPath extends AS_Action {
+    ASAuto auto;
     PathChain path;
 
-    public FollowPath(Auto auto, PathChain path) {
+    public ASFollowPath(ASAuto auto, PathChain path) {
         this.auto = auto;
         this.path = path;
     }

@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 
-public class PIDFController {
+public class ASPIDFController {
     double Kf;
     double Kp;
     double Ki;
@@ -12,7 +12,7 @@ public class PIDFController {
     
     double lastOutput = 10000;
 
-    public PIDFController(double Kf, double Kp, double Ki, double Kd) {
+    public ASPIDFController(double Kf, double Kp, double Ki, double Kd) {
         this.Kf = Kf;
         this.Kp = Kp;
         this.Ki = Ki;

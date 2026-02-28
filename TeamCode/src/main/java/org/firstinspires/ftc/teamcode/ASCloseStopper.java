@@ -1,15 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
 
-public class StopIntake extends Action {
-    Auto auto;
+public class ASCloseStopper extends AS_Action {
+    ASAuto auto;
 
-    public StopIntake(Auto auto) {
+    public ASCloseStopper(ASAuto auto) {
         this.auto = auto;
     }
 
     public void onStart() {
-        auto.intake.SetIntakeVelocity(0);
+        auto.intake.CloseStopper();
     }
 
     public boolean isDone() {

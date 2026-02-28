@@ -2,32 +2,26 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.JavaUtil;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.teamcode.BotConfig;
-import java.util.List;
 
-public class Launcher {
+public class ASLauncher {
 
     private LinearOpMode auto;
 
     public DcMotorEx launcher;
     
-    PIDFController launcherPIDFController = new PIDFController(0.0004, 0.025, 0/*.00001*/, 0/*.0001*/);
+    ASPIDFController launcherPIDFController = new ASPIDFController(0.0004, 0.025, 0/*.00001*/, 0/*.0001*/);
 
     int launcherTargetVelocity = 0;
 
     ElapsedTime deltaTimer = new ElapsedTime();
 
 
-    public Launcher(LinearOpMode auto) {
+    public ASLauncher(LinearOpMode auto) {
         this.auto = auto;
         
-        this.launcher = auto.hardwareMap.get(DcMotorEx.class, BotConfig.LAUNCHER_NAME);
+        this.launcher = auto.hardwareMap.get(DcMotorEx.class, ASBotConfig.LAUNCHER_NAME);
         this.launcher.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
     
@@ -67,7 +61,7 @@ public class Launcher {
 
 
     public void Spin() {
-        this.SetVelocity(BotConfig.AUTO_LAUNCHER_VELOCITY);
+        this.SetVelocity(ASBotConfig.AUTO_LAUNCHER_VELOCITY);
     }
 
 

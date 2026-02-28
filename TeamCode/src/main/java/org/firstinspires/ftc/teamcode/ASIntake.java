@@ -4,13 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.JavaUtil;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.BotConfig;
-import java.util.List;
 
-public class Intake {
+public class ASIntake {
 
     private LinearOpMode auto;
 
@@ -19,12 +14,12 @@ public class Intake {
     public Servo stopper;
 
 
-    public Intake(LinearOpMode auto) {
+    public ASIntake(LinearOpMode auto) {
         this.auto = auto;
         
-        this.intake = auto.hardwareMap.get(DcMotorEx.class, BotConfig.INTAKE_NAME);
-        this.pusher = auto.hardwareMap.get(DcMotorEx.class, BotConfig.PUSHER_NAME);
-        this.stopper = auto.hardwareMap.get(Servo.class, BotConfig.STOPPER_NAME);
+        this.intake = auto.hardwareMap.get(DcMotorEx.class, ASBotConfig.INTAKE_NAME);
+        this.pusher = auto.hardwareMap.get(DcMotorEx.class, ASBotConfig.PUSHER_NAME);
+        this.stopper = auto.hardwareMap.get(Servo.class, ASBotConfig.STOPPER_NAME);
         
         this.intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
@@ -49,12 +44,12 @@ public class Intake {
 
 
     public void SpinIntake() {
-        this.SetIntakeVelocity(BotConfig.AUTO_INTAKE_VELOCITY);
+        this.SetIntakeVelocity(ASBotConfig.AUTO_INTAKE_VELOCITY);
     }
 
 
     public void SpinIntake(double mult) {
-        this.SetIntakeVelocity((int)(BotConfig.AUTO_INTAKE_VELOCITY * mult));
+        this.SetIntakeVelocity((int)(ASBotConfig.AUTO_INTAKE_VELOCITY * mult));
     }
   
   
@@ -65,32 +60,32 @@ public class Intake {
 
 
     public void SpinPusher() {
-        this.SetPusherVelocity(BotConfig.AUTO_PUSHER_VELOCITY);
+        this.SetPusherVelocity(ASBotConfig.AUTO_PUSHER_VELOCITY);
     }
 
 
     public void SpinPusher(double mult) {
-        this.SetPusherVelocity((int)(BotConfig.AUTO_PUSHER_VELOCITY * mult));
+        this.SetPusherVelocity((int)(ASBotConfig.AUTO_PUSHER_VELOCITY * mult));
     }
 
 
     public void OpenStopper() {
-        stopper.setPosition(BotConfig.STOPPER_OPEN_POS);
+        stopper.setPosition(ASBotConfig.STOPPER_OPEN_POS);
     }
 
 
     public void CloseStopper() {
-        stopper.setPosition(BotConfig.STOPPER_CLOSE_POS);
+        stopper.setPosition(ASBotConfig.STOPPER_CLOSE_POS);
     }
 
 
     public void SetStopper(boolean open) {
-        stopper.setPosition(open ? BotConfig.STOPPER_OPEN_POS : BotConfig.STOPPER_CLOSE_POS);
+        stopper.setPosition(open ? ASBotConfig.STOPPER_OPEN_POS : ASBotConfig.STOPPER_CLOSE_POS);
     }
 
 
     public boolean isStopperOpen() {
-        return stopper.getPosition() == BotConfig.STOPPER_OPEN_POS;
+        return stopper.getPosition() == ASBotConfig.STOPPER_OPEN_POS;
     }
     
     public int getIntakeVelocity() {

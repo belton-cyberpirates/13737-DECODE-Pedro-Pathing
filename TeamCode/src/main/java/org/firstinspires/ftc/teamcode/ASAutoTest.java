@@ -4,69 +4,64 @@ import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-
-import org.firstinspires.ftc.teamcode.Direction;
-import org.firstinspires.ftc.teamcode.BotConfig;
-import org.firstinspires.ftc.teamcode.Auto;
 
 
 @Autonomous(name = "Pedro Blue Close", /*preselectTeleOp="Your Drive Code Here",*/ group="pedroblue")
 //@Disabled
-public class AutoTest extends Auto {
+public class ASAutoTest extends ASAuto {
     private final Pose startPose = new Pose(72+42, 72+52, Math.toRadians(0));
     private final Pose launchPose = new Pose(82, 86, Math.toRadians(135));
 
-    public Action[] getActions() {
+    public AS_Action[] getActions() {
 
-        Action[] launchSequence = {
+        AS_Action[] launchSequence = {
                 // Get ready for launching
-                new OpenStopper(this),
-                new SpinLauncher(this),
+                new ASOpenStopper(this),
+                new ASSpinLauncher(this),
 
                 // Move to shooting position
-                new FollowPath(this, follower.pathBuilder()
+                new ASFollowPath(this, follower.pathBuilder()
                         .addPath(new BezierLine(follower::getPose, launchPose))
                         .setLinearHeadingInterpolation(follower.getHeading(), launchPose.getHeading())
                         .build()
                 ),
 
                 // Launch!
-                new WaitForLauncher(this),
-                new Wait(this, 500),
+                new ASWaitForLauncher(this),
+                new ASWait(this, 500),
 
-                new SpinPusher(this),
-                new SpinIntake(this),
-                new Wait(this, 800),
-                new SpinIntake(this, -.3),
-                new Wait(this, 350),
-                new SpinIntake(this),
-                new SpinPusher(this, 1.5),
+                new ASSpinPusher(this),
+                new ASSpinIntake(this),
+                new ASWait(this, 800),
+                new ASSpinIntake(this, -.3),
+                new ASWait(this, 350),
+                new ASSpinIntake(this),
+                new ASSpinPusher(this, 1.5),
 
-                new Wait(this, 1500),
+                new ASWait(this, 1500),
 
                 // Reset
-                new StopLauncher(this),
-                new StopIntake(this),
-                new StopPusher(this)
+                new ASStopLauncher(this),
+                new ASStopIntake(this),
+                new ASStopPusher(this)
         };
 
-        Action[] actions = {
+        AS_Action[] actions = {
                 // ======================= AUTO START ======================= //
 
                 // Init
-                new SetStartingPose(this, startPose),
+                new ASSetStartingPose(this, startPose),
 
                 // Launch!
-                new ActionSequence(this, launchSequence),
+                new ASActionSequence(this, launchSequence),
 
                 // Get ready to intake
-                new CloseStopper(this),
-                new SpinIntake(this),
-                new SpinPusher(this),
+                new ASCloseStopper(this),
+                new ASSpinIntake(this),
+                new ASSpinPusher(this),
 
                 // Grab line and hit gate
-                new FollowPath(this, follower.pathBuilder()
+                new ASFollowPath(this, follower.pathBuilder()
                         // Grab line
                         .addPath(new BezierCurve(
                                 launchPose,
@@ -92,14 +87,14 @@ public class AutoTest extends Auto {
                         .build()
                 ),
 
-                new StopPusher(this),
-                new StopIntake(this),
+                new ASStopPusher(this),
+                new ASStopIntake(this),
 
                 // Launch!
-                new ActionSequence(this, launchSequence),
+                new ASActionSequence(this, launchSequence),
 
                 // Cycling time
-                new FollowPath(this, follower.pathBuilder()
+                new ASFollowPath(this, follower.pathBuilder()
                         .addPath(new BezierCurve(
                                 launchPose,
                                 new Pose(60, 90),

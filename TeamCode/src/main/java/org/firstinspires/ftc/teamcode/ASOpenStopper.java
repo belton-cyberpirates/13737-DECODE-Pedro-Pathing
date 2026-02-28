@@ -1,15 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
 
-public class SpinLauncher extends Action {
-    Auto auto;
+public class ASOpenStopper extends AS_Action {
+    ASAuto auto;
 
-    public SpinLauncher(Auto auto) {
+    public ASOpenStopper(ASAuto auto) {
         this.auto = auto;
     }
 
     public void onStart() {
-        auto.launcher.Spin();
+        auto.intake.OpenStopper();
     }
 
     public boolean isDone() {

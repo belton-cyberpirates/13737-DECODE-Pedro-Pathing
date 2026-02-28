@@ -3,13 +3,13 @@ package org.firstinspires.ftc.teamcode;
 import java.util.Arrays;
 
 
-public class ActionSequence extends Action {
-    Auto auto;
-    Action[] actions;
+public class ASActionSequence extends AS_Action {
+    ASAuto auto;
+    AS_Action[] actions;
     
-    Action currentAction;
+    AS_Action currentAction;
 
-    public ActionSequence(Auto auto, Action[] actions) {
+    public ASActionSequence(ASAuto auto, AS_Action[] actions) {
         this.auto = auto;
         this.actions = actions;
     }

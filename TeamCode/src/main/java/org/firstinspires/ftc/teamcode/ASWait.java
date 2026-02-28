@@ -2,12 +2,12 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-public class Wait extends Action {
-    Auto auto;
+public class ASWait extends AS_Action {
+    ASAuto auto;
     double time;
     ElapsedTime timer;
 
-    public Wait(Auto auto, double time) {
+    public ASWait(ASAuto auto, double time) {
         this.auto = auto;
         
         this.time = time;

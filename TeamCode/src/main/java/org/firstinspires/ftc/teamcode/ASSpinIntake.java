@@ -1,15 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
 
-public class SpinIntake extends Action {
-    Auto auto;
+public class ASSpinIntake extends AS_Action {
+    ASAuto auto;
     double mult = 1;
 
-    public SpinIntake(Auto auto) {
+    public ASSpinIntake(ASAuto auto) {
         this.auto = auto;
     }
 
-    public SpinIntake(Auto auto, double mult) {
+    public ASSpinIntake(ASAuto auto, double mult) {
         this.auto = auto;
         this.mult = mult;
     }

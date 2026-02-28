@@ -1,15 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
 
-public class StopLauncher extends Action {
-    Auto auto;
+public class ASStopPusher extends AS_Action {
+    ASAuto auto;
 
-    public StopLauncher(Auto auto) {
+    public ASStopPusher(ASAuto auto) {
         this.auto = auto;
     }
 
     public void onStart() {
-        auto.launcher.SetVelocity(0);
+        auto.intake.SetPusherVelocity(0);
     }
 
     public boolean isDone() {

@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-public enum Direction {
+public enum ASDirection {
   FORWARD,
   LEFT,
   RIGHT,

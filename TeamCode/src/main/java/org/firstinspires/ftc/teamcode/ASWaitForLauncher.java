@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
 
-public class WaitForLauncher extends Action {
-    Auto auto;
+public class ASWaitForLauncher extends AS_Action {
+    ASAuto auto;
 
 
-    public WaitForLauncher(Auto auto) {
+    public ASWaitForLauncher(ASAuto auto) {
         this.auto = auto;
     }
 

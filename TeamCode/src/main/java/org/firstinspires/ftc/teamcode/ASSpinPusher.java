@@ -1,15 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
 
-public class SpinPusher extends Action {
-    Auto auto;
+public class ASSpinPusher extends AS_Action {
+    ASAuto auto;
     double mult = 1;
 
-    public SpinPusher(Auto auto) {
+    public ASSpinPusher(ASAuto auto) {
         this.auto = auto;
     }
 
-    public SpinPusher(Auto auto, double mult) {
+    public ASSpinPusher(ASAuto auto, double mult) {
         this.auto = auto;
         this.mult = mult;
     }

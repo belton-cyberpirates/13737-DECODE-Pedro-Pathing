@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 
-public class PIDController {
+public class ASPIDController {
     double Kp;
     double Ki;
     double Kd;
@@ -11,7 +11,7 @@ public class PIDController {
     
     double lastOutput = 10000;
 
-    public PIDController(double Kp, double Ki, double Kd) {
+    public ASPIDController(double Kp, double Ki, double Kd) {
         this.Kp = Kp;
         this.Ki = Ki;
         this.Kd = Kd;
