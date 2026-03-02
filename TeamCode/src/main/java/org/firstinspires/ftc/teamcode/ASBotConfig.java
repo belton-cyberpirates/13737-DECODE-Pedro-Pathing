@@ -66,7 +66,7 @@ public class ASBotConfig {
   /*****************************************************************************
   ** INTAKE CONSTANTS
   *****************************************************************************/
-  public static final double STOPPER_OPEN_POS = 0.075;
+  public static final double STOPPER_OPEN_POS = 0.0;
   public static final double STOPPER_CLOSE_POS = 0.25;
   // ---------------------------------------------------------------------------
 

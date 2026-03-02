@@ -6,11 +6,11 @@ import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 
-@Autonomous(name = "Pedro Blue Close - fixed?", /*preselectTeleOp="Your Drive Code Here",*/ group="pedroblue")
+@Autonomous(name = "Pedro Blue Close", /*preselectTeleOp="Your Drive Code Here",*/ group="pedroblue")
 //@Disabled
 public class ASAutoBlueClose extends ASAuto {
     private final Pose startPose = new Pose(72-52, 72+42, Math.toRadians(90));
-    private final Pose launchPose = new Pose(72-14, 72+10, Math.toRadians(-135));
+    private final Pose launchPose = new Pose(72-13, 72+14, Math.toRadians(-130));
 
     public AS_Action[] getActions() {
 
@@ -28,7 +28,7 @@ public class ASAutoBlueClose extends ASAuto {
 
                 // Launch!
                 new ASWaitForLauncher(this),
-                new ASWait(this, 500),
+                new ASWait(this, 650),
 
                 new ASSpinPusher(this),
                 new ASSpinIntake(this),
@@ -80,28 +80,51 @@ public class ASAutoBlueClose extends ASAuto {
                         // Get out smoothly
                         .addPath(new BezierLine(
                                 follower::getPose,
-                                new Pose(72-28, 72-7)
+                                new Pose(72-35, 72-7)
                         ))
-                        .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(-135))
+                        .setLinearHeadingInterpolation(Math.toRadians(190), Math.toRadians(-135))
                         .setNoDeceleration()
                         .build()
                 ),
 
+                // Stop intaking
                 new ASStopPusher(this),
                 new ASStopIntake(this),
 
                 // Launch!
                 new ASActionSequence(this, launchSequence),
 
+                // Get ready to intake
+                new ASCloseStopper(this),
+                new ASSpinIntake(this),
+                new ASSpinPusher(this),
+
                 // Cycling time
                 new ASFollowPath(this, follower.pathBuilder()
                         .addPath(new BezierCurve(
                                 launchPose,
-                                new Pose(72-18, 72-12),
-                                new Pose(72-58, 72-12)
+                                new Pose(72-18, 72-8),
+                                new Pose(72-58.5, 72-11)
                         ))
-                        .setLinearHeadingInterpolation(follower.getHeading(), Math.toRadians(140))
+                        .setLinearHeadingInterpolation(follower.getHeading(), Math.toRadians(150))
                         .build()),
+                new ASWait(this, 2500),
+                // Dodge first line
+                new ASFollowPath(this, follower.pathBuilder()
+                        .addPath(new BezierLine(
+                                follower::getPose,
+                                new Pose(72-35, 72-7)
+                        ))
+                        .setLinearHeadingInterpolation(Math.toRadians(190), Math.toRadians(-135))
+                        .setNoDeceleration()
+                        .build()
+                ),
+
+                // Stop intaking
+                new ASStopPusher(this),
+                new ASStopIntake(this),
+
+                new ASActionSequence(this, launchSequence),
 
                 // ======================== AUTO END ======================== //
         };

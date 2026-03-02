@@ -11,7 +11,7 @@ public class ASLauncher {
 
     public DcMotorEx launcher;
     
-    ASPIDFController launcherPIDFController = new ASPIDFController(0.0004, 0.025, 0/*.00001*/, 0/*.0001*/);
+    ASPIDFController launcherPIDFController = new ASPIDFController(0.0004, 0.0275, 0/*.00001*/, 0/*.0001*/);
 
     int launcherTargetVelocity = 0;
 

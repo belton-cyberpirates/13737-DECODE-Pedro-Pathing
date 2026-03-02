@@ -6,7 +6,7 @@ import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 
-@Autonomous(name = "Pedro Blue Close", /*preselectTeleOp="Your Drive Code Here",*/ group="pedroblue")
+@Autonomous(name = "Pedro Blue Close Old", /*preselectTeleOp="Your Drive Code Here",*/ group="pedroblue")
 //@Disabled
 public class ASAutoTest extends ASAuto {
     private final Pose startPose = new Pose(72+42, 72+52, Math.toRadians(0));
