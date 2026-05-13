@@ -17,6 +17,6 @@ public class ASFollowPath extends AS_Action {
     }
 
     public boolean isDone() {
-        return auto.follower.atParametricEnd();
+        return !auto.follower.isBusy();
     }
 }
