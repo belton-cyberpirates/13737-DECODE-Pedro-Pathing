@@ -10,40 +10,31 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 //@Disabled
 public class ASAutoRedClose extends ASAuto {
     private final Pose startPose = new Pose(72+53.5, 72+41, Math.toRadians(90));
-    private final Pose launchPose = new Pose(72+12, 72+15, Math.toRadians(136));
+    private final Pose launchPose = new Pose(72+12, 72+15, Math.toRadians(137));
     private final Pose cyclePose = new Pose(72+58.5, 72-11, Math.toRadians(30));
+    private final Pose endLaunchPose = new Pose(72+12, 72+27, Math.toRadians(134));
+
+
+    private void launchSetup() {
+        intake.OpenStopper();
+        intake.SetPusherVelocity(0);
+        intake.SetIntakeVelocity(0);
+    }
 
     public AS_Action[] getActions() {
 
         AS_Action[] launchSequence = {
-                // Get ready for launching
-                new ASOpenStopper(this),
-                new ASSpinLauncher(this),
-
-                // Move to shooting position
-                new ASFollowPath(this, follower.pathBuilder()
-                        .addPath(new BezierLine(follower::getPose, launchPose))
-                        .setConstantHeadingInterpolation(launchPose.getHeading())
-                        .setTimeoutConstraint(50)
-                        .build()
-                ),
-
                 // Launch!
                 new ASWaitForLauncher(this),
                 //new ASWait(this, 500),
 
                 new ASSpinPusher(this),
+                new ASWait(this, 100),
                 new ASSpinIntake(this),
-                //new ASWait(this, 600),
-                //new ASSpinIntake(this, -.3),
-                //new ASWait(this, 300),
-                //new ASSpinIntake(this),
-                //new ASSpinPusher(this, 2.5),
 
-                new ASWait(this, 1200),
+                new ASWait(this, 900),
 
                 // Reset
-                //new ASStopLauncher(this),
                 new ASStopIntake(this),
                 new ASStopPusher(this)
         };
@@ -66,25 +57,19 @@ public class ASAutoRedClose extends ASAuto {
                         .build()
                 ),
 
-                new ASWait(this, 1200),
+                new ASWait(this, 1000),
 
-                // Dodge first line
+                // Move to shooting position (dodge first line)
                 new ASFollowPath(this, follower.pathBuilder()
-                        .addPath(new BezierLine(
+                        .addPath(new BezierCurve(
                                 cyclePose,
-                                new Pose(72+35, 72-7)
+                                new Pose(72+25, 72-15),
+                                launchPose
                         ))
-                        .setLinearHeadingInterpolation(Math.toRadians(-10), Math.toRadians(70))
-                        .setNoDeceleration()
+                        .setLinearHeadingInterpolation(Math.toRadians(-10), launchPose.getHeading())
+                        .addParametricCallback(.4, this::launchSetup)
                         .build()
                 ),
-
-                // Stop intaking
-                new ASStopPusher(this),
-                new ASStopIntake(this),
-
-                // Launch
-                new ASActionSequence(this, launchSequence),
         };
 
         AS_Action[] actions = {
@@ -93,9 +78,17 @@ public class ASAutoRedClose extends ASAuto {
                 // Init
                 new ASSetStartingPose(this, startPose),
                 new ASSpinLauncher(this),
-                new ASWait(this, 300),
 
                 // Launch!
+                new ASFollowPath(this, follower.pathBuilder()
+                        .addPath(new BezierLine(
+                                startPose,
+                                launchPose
+                        ))
+                        .setLinearHeadingInterpolation(startPose.getHeading(), launchPose.getHeading())
+                        .addParametricCallback(.5, this::launchSetup)
+                        .build()
+                ),
                 new ASActionSequence(this, launchSequence),
 
                 // Get ready to intake
@@ -109,7 +102,7 @@ public class ASAutoRedClose extends ASAuto {
                         .addPath(new BezierCurve(
                                 launchPose,
                                 new Pose(72+26, 72-12),
-                                new Pose(72+50, 72-12)
+                                new Pose(72+52, 72-12)
                         ))
                         .setTangentHeadingInterpolation()
                         .setNoDeceleration()
@@ -121,27 +114,27 @@ public class ASAutoRedClose extends ASAuto {
                         ))
                         .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(10))
                         .setNoDeceleration()
-                        //.setTValueConstraint(0.95)
                         // Get out smoothly
-                        .addPath(new BezierLine(
+                        .addPath(new BezierCurve(
                                 follower::getPose,
-                                new Pose(72+35, 72-7)
+                                new Pose(72+25, 72-15),
+                                launchPose
                         ))
-                        .setLinearHeadingInterpolation(Math.toRadians(-10), Math.toRadians(70))
-                        .setNoDeceleration()
+                        .setLinearHeadingInterpolation(Math.toRadians(-10), launchPose.getHeading())
+                        .addParametricCallback(.5, this::launchSetup)
                         .build()
                 ),
-
-                // Stop intaking
-                new ASStopPusher(this),
-                new ASStopIntake(this),
 
                 // Launch!
                 new ASActionSequence(this, launchSequence),
 
+                // Cycle 'n launch
                 new ASActionSequence(this, CycleSequence),
+                new ASActionSequence(this, launchSequence),
 
+                // Another one
                 new ASActionSequence(this, CycleSequence),
+                new ASActionSequence(this, launchSequence),
 
                 // Get ready to intake
                 new ASCloseStopper(this),
@@ -157,34 +150,31 @@ public class ASAutoRedClose extends ASAuto {
                         ))
                         .setTangentHeadingInterpolation()
                         .setNoDeceleration()
-                        .addPath(new BezierLine(
+                        .addPath(new BezierCurve(
                                 follower::getPose,
-                                new Pose(72+30, 72+13)
+                                new Pose(72+20, 72+3),
+                                endLaunchPose
                         ))
-                        .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(140))
-                        .setNoDeceleration()
-                        .setTValueConstraint(.9)
+                        .setLinearHeadingInterpolation(Math.toRadians(0), endLaunchPose.getHeading())
+                        .addParametricCallback(.3, this::launchSetup)
+                        .setBrakingStart(10)
                         .build()
                 ),
-
-                // Stop intaking
-                new ASStopPusher(this),
-                new ASStopIntake(this),
 
                 // Launch Last set
                 new ASActionSequence(this, launchSequence),
 
                 // Leave
-                new ASFollowPath(this, follower.pathBuilder()
-                        .addPath(new BezierLine(
-                                follower::getPose,
-                                new Pose(72+13+15, 72+14-15)
-                        ))
-                        .setConstantHeadingInterpolation(Math.toRadians(140))
-                        .setNoDeceleration()
-                        .setTValueConstraint(.2)
-                        .build()
-                ),
+//                new ASFollowPath(this, follower.pathBuilder()
+//                        .addPath(new BezierLine(
+//                                launchPose,
+//                                leavePose
+//                        ))
+//                        .setConstantHeadingInterpolation(launchPose.getHeading())
+//                        .setNoDeceleration()
+//                        .setTValueConstraint(.2)
+//                        .build()
+//                ),
 
                 // ======================== AUTO END ======================== //
         };
