@@ -33,6 +33,7 @@ public abstract class ASAuto extends LinearOpMode {
         // Let the user know when initialization is done
         telemetry.addLine("Fully initialized! Press start to begin auto.");
         telemetry.update();
+        telemetry.setMsTransmissionInterval(50);
     }
 
     @Override
@@ -64,6 +65,7 @@ public abstract class ASAuto extends LinearOpMode {
             follower.update();
 
             // Loop telemetry; updates constantly
+            telemetry.addData("Robot stuck", follower.isRobotStuck());
 
             telemetry.update();
         }

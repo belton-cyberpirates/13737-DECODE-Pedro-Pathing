@@ -19,7 +19,7 @@ public class ASLauncher {
     public DcMotorEx launcherRight;
     Servo light;
 
-    ASPIDFController launcherPIDFController = new ASPIDFController(0.0004, .0175, 0/*.00001*/, 0.0001);
+    ASPIDFController launcherPIDFController = new ASPIDFController(0.0004, 0.0175, 0/*.00001*/, 0.0002);
 
     int launcherTargetVelocity = 0;
     boolean safe = false;

@@ -53,8 +53,10 @@ public class ASBotConfig {
    *****************************************************************************/
   public static final int AUTO_DRIVE_VELOCITY = 1000;
   public static final int AUTO_PUSHER_VELOCITY = 70000;
+  public static final int AUTO_PUSHER_FAR_VELOCITY = 600;
   public static final int AUTO_INTAKE_VELOCITY = -2500;
   public static final int AUTO_LAUNCHER_VELOCITY = 1340;
+  public static final int AUTO_LAUNCHER_FAR_VELOCITY = 1550;
   // ---------------------------------------------------------------------------
 
 

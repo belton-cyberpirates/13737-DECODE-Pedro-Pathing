@@ -6,53 +6,90 @@ import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 
-@Autonomous(name = "Pedro Blue Close", /*preselectTeleOp="Your Drive Code Here",*/ group="pedroblue")
+@Autonomous(name = "Blue Close | 15 | PL->L2->Cycle(x2)->L1", /*preselectTeleOp="Your Drive Code Here",*/ group="!pedroblue")
 //@Disabled
 public class ASAutoBlueClose extends ASAuto {
-    private final Pose startPose = new Pose(72-52, 72+42, Math.toRadians(90));
-    private final Pose launchPose = new Pose(72-13, 72+14, Math.toRadians(230));
+    private final Pose startPose = new Pose(72-54, 72+40, Math.toRadians(180));
+    private final Pose launchPose = new Pose(72-12, 72+15, Math.toRadians(230));
+    private final Pose cyclePose = new Pose(72-59, 72-11.5, Math.toRadians(180-30));
+    private final Pose endLaunchPose = new Pose(72-13, 72+31, Math.toRadians(236));
+
+
+    private void launchSetup() {
+        intake.OpenStopper();
+        intake.SetPusherVelocity(0);
+        intake.SetIntakeVelocity(0);
+    }
 
     public AS_Action[] getActions() {
 
         AS_Action[] launchSequence = {
-                // Get ready for launching
-                new ASOpenStopper(this),
-                new ASSpinLauncher(this),
-
-                // Move to shooting position
-                new ASFollowPath(this, follower.pathBuilder()
-                        .addPath(new BezierLine(follower::getPose, launchPose))
-                        .setLinearHeadingInterpolation(follower.getHeading(), launchPose.getHeading())
-                        .build()
-                ),
-
                 // Launch!
                 new ASWaitForLauncher(this),
-                new ASWait(this, 650),
+                new ASWait(this, 200),
 
                 new ASSpinPusher(this),
+                new ASWait(this, 100),
                 new ASSpinIntake(this),
-                new ASWait(this, 800),
-                new ASSpinIntake(this, -.3),
-                new ASWait(this, 350),
-                new ASSpinIntake(this),
-                new ASSpinPusher(this, 2.5),
 
-                new ASWait(this, 1000),
+                new ASWait(this, 900),
 
                 // Reset
-                new ASStopLauncher(this),
                 new ASStopIntake(this),
                 new ASStopPusher(this)
         };
 
-        AS_Action[] actions = {
+        AS_Action[] CycleSequence = {
+                // Get ready to intake
+                new ASCloseStopper(this),
+                new ASSpinIntake(this),
+                new ASSpinPusher(this),
+
+                // Cycling time
+                new ASFollowPath(this, follower.pathBuilder()
+                        .addPath(new BezierCurve(
+                                launchPose,
+                                new Pose(72-18, 72-8),
+                                cyclePose
+                        ))
+                        .setLinearHeadingInterpolation(launchPose.getHeading(), cyclePose.getHeading())
+                        .setTimeoutConstraint(50)
+                        .build()
+                ),
+
+                new ASWait(this, 1000),
+
+                // Move to shooting position (dodge first line)
+                new ASFollowPath(this, follower.pathBuilder()
+                        .addPath(new BezierCurve(
+                                cyclePose,
+                                new Pose(72-25, 72-15),
+                                launchPose
+                        ))
+                        .setLinearHeadingInterpolation(Math.toRadians(180+10), launchPose.getHeading())
+                        .addParametricCallback(.4, this::launchSetup)
+                        .setBrakingStart(3)
+                        .build()
+                ),
+        };
+
+        return new AS_Action[] {
                 // ======================= AUTO START ======================= //
 
                 // Init
                 new ASSetStartingPose(this, startPose),
+                new ASSpinLauncher(this),
 
                 // Launch!
+                new ASFollowPath(this, follower.pathBuilder()
+                        .addPath(new BezierLine(
+                                startPose,
+                                launchPose
+                        ))
+                        .setConstantHeadingInterpolation(launchPose.getHeading())
+                        .addParametricCallback(.25, this::launchSetup)
+                        .build()
+                ),
                 new ASActionSequence(this, launchSequence),
 
                 // Get ready to intake
@@ -65,66 +102,39 @@ public class ASAutoBlueClose extends ASAuto {
                         // Grab line
                         .addPath(new BezierCurve(
                                 launchPose,
-                                new Pose(72-18, 72-12),
-                                new Pose(72-62, 72-12)
+                                new Pose(72-26, 72-12),
+                                new Pose(72-52, 72-12)
                         ))
                         .setTangentHeadingInterpolation()
+                        .setNoDeceleration()
                         // Hit gate
                         .addPath(new BezierCurve(
                                 follower::getPose,
-                                new Pose(72-28, 72-17),
+                                new Pose(72-38, 72-13),
                                 new Pose(72-53, 72-2)
                         ))
-                        .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(170))
-                        .setTValueConstraint(0.95)
-                        // Get out smoothly
-                        .addPath(new BezierLine(
-                                follower::getPose,
-                                new Pose(72-45, 72-7)
-                        ))
-                        .setLinearHeadingInterpolation(Math.toRadians(190), Math.toRadians(230))
+                        .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180-10))
                         .setNoDeceleration()
+                        // Get out smoothly
+                        .addPath(new BezierCurve(
+                                follower::getPose,
+                                new Pose(72-25, 72-15),
+                                launchPose
+                        ))
+                        .setConstantHeadingInterpolation(launchPose.getHeading())
+                        .addParametricCallback(.5, this::launchSetup)
                         .build()
                 ),
-
-                // Stop intaking
-                new ASStopPusher(this),
-                new ASStopIntake(this),
 
                 // Launch!
                 new ASActionSequence(this, launchSequence),
 
-                // Get ready to intake
-                new ASCloseStopper(this),
-                new ASSpinIntake(this),
-                new ASSpinPusher(this),
+                // Cycle 'n launch
+                new ASActionSequence(this, CycleSequence),
+                new ASActionSequence(this, launchSequence),
 
-                // Cycling time
-                new ASFollowPath(this, follower.pathBuilder()
-                        .addPath(new BezierCurve(
-                                launchPose,
-                                new Pose(72-18, 72-8),
-                                new Pose(72-58.5, 72-11)
-                        ))
-                        .setLinearHeadingInterpolation(230, Math.toRadians(150))
-                        .build()),
-                new ASWait(this, 2000),
-                // Dodge first line
-                new ASFollowPath(this, follower.pathBuilder()
-                        .addPath(new BezierLine(
-                                follower::getPose,
-                                new Pose(72-45, 72-7)
-                        ))
-                        .setLinearHeadingInterpolation(Math.toRadians(190), Math.toRadians(230))
-                        .setNoDeceleration()
-                        .build()
-                ),
-
-                // Stop intaking
-                new ASStopPusher(this),
-                new ASStopIntake(this),
-
-                // Launch 3rd set
+                // Another one
+                new ASActionSequence(this, CycleSequence),
                 new ASActionSequence(this, launchSequence),
 
                 // Get ready to intake
@@ -137,40 +147,25 @@ public class ASAutoBlueClose extends ASAuto {
                         .addPath(new BezierCurve(
                                 follower::getPose,
                                 new Pose(72-13, 72+13),
-                                new Pose(72-54, 72+13)
+                                new Pose(72-44, 72+13)
                         ))
                         .setTangentHeadingInterpolation()
                         .setNoDeceleration()
-                        .addPath(new BezierLine(
+                        .addPath(new BezierCurve(
                                 follower::getPose,
-                                new Pose(72-30, 72+13)
+                                new Pose(72-20, 72+3),
+                                endLaunchPose
                         ))
-                        .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(230))
-                        .setNoDeceleration()
+                        .setConstantHeadingInterpolation(endLaunchPose.getHeading())
+                        .addParametricCallback(.3, this::launchSetup)
                         .build()
                 ),
+                new ASWait(this, 500),
 
-                // Stop intaking
-                new ASStopPusher(this),
-                new ASStopIntake(this),
-
-                // Launch 4th set
+                // Launch Last set
                 new ASActionSequence(this, launchSequence),
-
-                // Leave
-                new ASFollowPath(this, follower.pathBuilder()
-                        .addPath(new BezierLine(
-                                follower::getPose,
-                                new Pose(72-13-15, 72+14-15)
-                        ))
-                        .setConstantHeadingInterpolation(Math.toRadians(230))
-                        .setNoDeceleration()
-                        .build()
-                ),
 
                 // ======================== AUTO END ======================== //
         };
-
-        return actions;
     }
 }

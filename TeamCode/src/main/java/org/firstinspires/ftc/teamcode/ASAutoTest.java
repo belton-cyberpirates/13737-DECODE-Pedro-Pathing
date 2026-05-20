@@ -4,10 +4,11 @@ import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 
 @Autonomous(name = "Pedro Blue Close Old", /*preselectTeleOp="Your Drive Code Here",*/ group="pedroblue")
-//@Disabled
+@Disabled
 public class ASAutoTest extends ASAuto {
     private final Pose startPose = new Pose(72+42, 72+52, Math.toRadians(0));
     private final Pose launchPose = new Pose(82, 86, Math.toRadians(135));
@@ -46,7 +47,7 @@ public class ASAutoTest extends ASAuto {
                 new ASStopPusher(this)
         };
 
-        AS_Action[] actions = {
+        return new AS_Action[] {
                 // ======================= AUTO START ======================= //
 
                 // Init
@@ -105,7 +106,5 @@ public class ASAutoTest extends ASAuto {
 
                 // ======================== AUTO END ======================== //
         };
-
-        return actions;
     }
 }

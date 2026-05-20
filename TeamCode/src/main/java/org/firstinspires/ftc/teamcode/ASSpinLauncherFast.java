@@ -9,7 +9,7 @@ public class ASSpinLauncherFast extends AS_Action {
     }
 
     public void onStart() {
-        auto.launcher.SetVelocity(ASBotConfig.LAUNCHER_FAR_VELOCITY);
+        auto.launcher.SetVelocity(ASBotConfig.AUTO_LAUNCHER_FAR_VELOCITY);
     }
 
     public boolean isDone() {
