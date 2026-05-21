@@ -6,20 +6,19 @@ import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 
-@Autonomous(name = "Intake", /*preselectTeleOp="Your Drive Code Here",*/ group="test")
+@Autonomous(name = "Blue Close Test", preselectTeleOp="Field Centric (Pedro)", group="test")
 //@Disabled
-public class ASAutoSetup extends ASAuto {
+public class ASAutoBlueTest extends ASAuto {
+    private final Pose startPose = new Pose(72-54, 72+40, Math.toRadians(180));
 
     public AS_Action[] getActions() {
-
         return new AS_Action[] {
                 // ======================= AUTO START ======================= //
-                // Intake preloads
-                new ASCloseStopper(this),
-                new ASSpinIntake(this),
-                new ASSpinPusher(this),
 
-                new ASWait(this, 2000)
+                // Init
+                new ASSetStartingPose(this, startPose),
+                new ASSetColor(this, Color.BLUE),
+
                 // ======================== AUTO END ======================== //
         };
     }

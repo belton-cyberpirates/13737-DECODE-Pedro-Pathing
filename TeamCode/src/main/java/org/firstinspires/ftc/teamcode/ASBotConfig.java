@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import com.pedropathing.geometry.Pose;
+
 public class ASBotConfig {
   /*****************************************************************************
    ** HARDWARE CONSTANTS
@@ -38,13 +40,15 @@ public class ASBotConfig {
 
   public static final int LAUNCHER_DROP_VELOCITY = 300;
   public static final int LAUNCHER_PASSIVE_VELOCITY = 1000;
-  public static final int LAUNCHER_SAB_VELOCITY = 900;
   public static final int LAUNCHER_VELOCITY = 1300;
   public static final int LAUNCHER_FAR_VELOCITY = 1600;
 
   public static final double LIGHT_BLUE = 0.611;
   public static final double LIGHT_GREEN = 0.472;
   public static final double LIGHT_RED = 0.3;
+
+  public static final Pose BLUE_TARGET_POSE = new Pose(72-65, 72+66);
+  public static final Pose RED_TARGET_POSE = new Pose(72+65, 72+66);
   // ---------------------------------------------------------------------------
 
 
@@ -79,7 +83,9 @@ public class ASBotConfig {
   /*****************************************************************************
    ** LAUNCHER CONSTANTS
    *****************************************************************************/
-  public static final int LAUNCHER_VELOCITY_MARGIN = 50;
+  public static final int LAUNCHER_VELOCITY_MARGIN = 30;
+  public static final double LAUNCHER_RADIUS = 1.8307; // inches
+  public static final double LAUNCHER_SPEED_CONVERSION_RATIO = .41081; // ball launch velocity per tick
   // ---------------------------------------------------------------------------
 
 

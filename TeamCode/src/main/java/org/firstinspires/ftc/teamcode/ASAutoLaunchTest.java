@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 
 @Autonomous(name = "launch test", /*preselectTeleOp="Your Drive Code Here",*/ group="zz-test")
-//@Disabled
+@Disabled
 public class ASAutoLaunchTest extends ASAuto {
 
     public AS_Action[] getActions() {

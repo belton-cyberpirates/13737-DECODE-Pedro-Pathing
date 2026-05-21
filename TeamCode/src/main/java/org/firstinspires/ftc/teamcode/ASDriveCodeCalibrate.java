@@ -10,8 +10,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@TeleOp(name="Field Centric (Pedro)", group="!CompDriveCodes")
-public class ASDriveCodeBlue extends LinearOpMode {
+@TeleOp(name="Field Centric - Calibrate Launcher", group="test")
+public class ASDriveCodeCalibrate extends LinearOpMode {
 
     public static Follower follower;
     public static Pose targetPose;
@@ -20,12 +20,12 @@ public class ASDriveCodeBlue extends LinearOpMode {
     ElapsedTime deltaTimer = new ElapsedTime();
 
     // Constants
-    double LEAD_ANGLE_MULT = 1.5;
+    double LEAD_ANGLE_MULT = .0003;
 
     // Hardware Helper Classes
     ASIntake intake;
     ASLauncher launcher;
-    ASPIDController imuPidController = new ASPIDController(1.4, 0.0001, 0.0001);
+    ASPIDController imuPidController = new ASPIDController(1.4, 0.00005, 0.0001);
 
     // Vars
 
@@ -36,6 +36,7 @@ public class ASDriveCodeBlue extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        int targetVel = 1000;
         telemetry.setMsTransmissionInterval(200);
 
         intake = new ASIntake(this);
@@ -54,9 +55,6 @@ public class ASDriveCodeBlue extends LinearOpMode {
             telemetry.addData("pos x", follower.getPose().getX());
             telemetry.addData("pos y", follower.getPose().getY());
             telemetry.addData("heading", follower.getHeading());
-
-            telemetry.addData("dist from target", targetPose.minus(follower.getPose()).getAsVector().getMagnitude());
-
             telemetry.addData("velocity", follower.getVelocity().getMagnitude());
             telemetry.addData("angular velocity", follower.getAngularVelocity());
             telemetry.addData("velocity x", follower.getVelocity().getXComponent());
@@ -75,18 +73,18 @@ public class ASDriveCodeBlue extends LinearOpMode {
             deltaTimer.reset();
 
             // Get the speed the bot should go with the joystick pushed all the way
-            double maxSpeed = calcMaxSpeed(gamepad1.right_trigger - gamepad1.left_trigger);
+            double maxSpeed = calcMaxSpeed(gamepad1.right_trigger - gamepad1.left_trigger, ASBotConfig.BASE_SPEED, ASBotConfig.MAX_BOOST);
 
 
             // set pin locations when corresponding dpad buttons are pressed
             if (gamepad1.dpadDownWasPressed()) {
-                aPose = follower.getPose();
+                targetVel -= 10;
             }
             else if (gamepad1.dpadLeftWasPressed()) {
                 xPose = follower.getPose();
             }
             else if (gamepad1.dpadUpWasPressed()) {
-                yPose = follower.getPose();
+                targetVel += 10;
             }
 
             // track pin locations when respective buttons are being pressed
@@ -120,47 +118,40 @@ public class ASDriveCodeBlue extends LinearOpMode {
                         .build()
                 );
             }
-            if (gamepad1.aWasReleased() || gamepad1.xWasReleased() || gamepad1.yWasReleased()) {
-                follower.startTeleOpDrive(true);
+
+            // aim at angle for far goal when respective button pressed
+            else if (gamepad1.b) {
+                Pose refPose = new Pose(follower.getPose().getX() - targetPose.getX(), follower.getPose().getY() - targetPose.getY());
+                Vector velocity = follower.getVelocity();
+
+                double tanVelocity = ( refPose.getX() * velocity.getYComponent() - refPose.getY() * velocity.getXComponent() ) /
+                        Math.sqrt( Math.pow(refPose.getX(), 2) + Math.pow(refPose.getY(), 2) );
+                double launchVelocity = launcher.launcherTargetVelocity * ASBotConfig.LAUNCHER_SPEED_CONVERSION_RATIO;
+                double angleOffset =
+                        -Math.PI/2 + // account for offset launcher
+                        Math.atan(tanVelocity / launchVelocity) + // ideal angle (math)
+                        0; // account for PID drift
+
+                double targetAngle = refPose.getAsVector().getTheta() + angleOffset;
+
+                follower.setTeleOpDrive(
+                        -gamepad1.left_stick_y * maxSpeed,
+                        -gamepad1.left_stick_x * maxSpeed,
+                        imuPidController.PIDControlRadians(targetAngle, follower.getHeading(), deltaTime),
+                        false,
+                        headingOffset
+                );
+                telemetry.addData("tangential velocity", tanVelocity);
+                telemetry.addData("target angle", targetAngle);
             }
-
-            if (follower.isTeleopDrive()) {
-                // aim at angle for far goal when respective button pressed
-                if (gamepad1.b) {
-                    Pose refPose = follower.getPose().minus(targetPose);
-                    Vector velocity = follower.getVelocity();
-
-                    double tanVelocity = (refPose.getX() * velocity.getYComponent() - refPose.getY() * velocity.getXComponent()) /
-                                                    Math.sqrt(Math.pow(refPose.getX(), 2) + Math.pow(refPose.getY(), 2));
-                    double launchVelocity = launcher.launcherTargetVelocity * ASBotConfig.LAUNCHER_SPEED_CONVERSION_RATIO;
-                    double dist = targetPose.minus(follower.getPose()).getAsVector().getMagnitude();
-                    double launcherAngleOffset = Math.atan(5.5 / dist);
-                    double angleOffset =
-                            Math.atan(tanVelocity / launchVelocity) // ideal angle (math)
-                            * LEAD_ANGLE_MULT // account for imperfect physics
-                            - Math.PI/2 // account for launcher rotation
-                            + launcherAngleOffset; // account for launcher offset
-
-                    double targetAngle = refPose.getAsVector().getTheta() + angleOffset;
-
-                    follower.setTeleOpDrive(
-                            -gamepad1.left_stick_y * maxSpeed,
-                            -gamepad1.left_stick_x * maxSpeed,
-                            imuPidController.PIDControlRadians(targetAngle, follower.getHeading(), deltaTime),
-                            false,
-                            headingOffset
-                    );
-                    telemetry.addData("tangential velocity", tanVelocity);
-                    telemetry.addData("target angle", targetAngle);
-                } else {
-                    follower.setTeleOpDrive(
-                            -gamepad1.left_stick_y * maxSpeed,
-                            -gamepad1.left_stick_x * maxSpeed,
-                            -gamepad1.right_stick_x * maxSpeed,
-                            false,
-                            headingOffset
-                    );
-                }
+            else {
+                follower.setTeleOpDrive(
+                        -gamepad1.left_stick_y * maxSpeed,
+                        -gamepad1.left_stick_x * maxSpeed,
+                        -gamepad1.right_stick_x * maxSpeed,
+                        false,
+                        headingOffset
+                );
             }
 
             // P2 variables
@@ -183,18 +174,7 @@ public class ASDriveCodeBlue extends LinearOpMode {
             intake.SetStopper(gamepad2.dpad_down || gamepad2.right_trigger > 0.5);
 
             // Flywheel
-            if (gamepad2.dpad_down) {
-                launcher.SetVelocity(ASBotConfig.LAUNCHER_DROP_VELOCITY);
-            }
-            else if (rightStickYGP2 < -.5) {
-                launcher.SetVelocity(launcher.CalcSpeed( targetPose.minus(follower.getPose()).getAsVector().getMagnitude() ));
-            }
-            else if (rightStickYGP2 > .5) {
-                launcher.SetVelocity((gamepad2.left_trigger > 0) ? ASBotConfig.LAUNCHER_FAR_VELOCITY : ASBotConfig.LAUNCHER_VELOCITY);
-            }
-            else {
-                launcher.SetVelocity(ASBotConfig.LAUNCHER_PASSIVE_VELOCITY);
-            }
+            launcher.SetVelocity(targetVel);
 
             launcher.safe = safe;
 
@@ -210,10 +190,10 @@ public class ASDriveCodeBlue extends LinearOpMode {
      * if boost trigger unpressed, return base_speed,
      * else return base_speed + boost amount
      */
-    double calcMaxSpeed(double triggerVal) {
-        double boostRatio = triggerVal * ASBotConfig.MAX_BOOST;
-        double boostSpeed = boostRatio * ASBotConfig.BASE_SPEED;
+    double calcMaxSpeed(double triggerVal, double baseSpeed, double boostMult) {
+        double boostRatio = triggerVal * boostMult;
+        double boostSpeed = boostRatio * baseSpeed;
 
-        return ASBotConfig.BASE_SPEED + boostSpeed;
+        return baseSpeed + boostSpeed;
     }
 }

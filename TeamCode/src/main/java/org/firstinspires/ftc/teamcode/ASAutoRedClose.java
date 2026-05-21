@@ -6,7 +6,7 @@ import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 
-@Autonomous(name = "Red Close | 15 | PL->L2->Cycle(x2)->L1", /*preselectTeleOp="Your Drive Code Here",*/ group="!pedrored")
+@Autonomous(name = "Red Close | 15 | PL->L2->Cycle(x2)->L1", preselectTeleOp="Field Centric (Pedro)", group="!pedrored")
 //@Disabled
 public class ASAutoRedClose extends ASAuto {
     private final Pose startPose = new Pose(72+53.5, 72+41, Math.toRadians(180));
@@ -77,6 +77,7 @@ public class ASAutoRedClose extends ASAuto {
 
                 // Init
                 new ASSetStartingPose(this, startPose),
+                new ASSetColor(this, Color.RED),
                 new ASSpinLauncher(this),
 
                 // Launch!

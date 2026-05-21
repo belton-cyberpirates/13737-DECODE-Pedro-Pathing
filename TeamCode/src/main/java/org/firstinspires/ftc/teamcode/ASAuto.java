@@ -10,6 +10,10 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 
 public abstract class ASAuto extends LinearOpMode {
+    public enum Color {
+        BLUE,
+        RED,
+    }
     abstract AS_Action[] getActions();
 
     public Follower follower;
@@ -27,6 +31,7 @@ public abstract class ASAuto extends LinearOpMode {
 
         // Assign needed variables
         follower = Constants.createFollower(hardwareMap);
+        ASDriveCodeBlue.follower = follower;
 
         // Run class initialization funcs
 
@@ -68,6 +73,20 @@ public abstract class ASAuto extends LinearOpMode {
             telemetry.addData("Robot stuck", follower.isRobotStuck());
 
             telemetry.update();
+        }
+    }
+
+    public void SetColor(Color color) {
+        switch (color) {
+            case BLUE:
+                ASDriveCodeBlue.targetPose = ASBotConfig.BLUE_TARGET_POSE;
+                ASDriveCodeBlue.headingOffset = 0;
+                break;
+            case RED:
+                ASDriveCodeBlue.targetPose = ASBotConfig.RED_TARGET_POSE;
+                ASDriveCodeBlue.headingOffset = Math.PI;
+                break;
+
         }
     }
 }

@@ -8,6 +8,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.ASBotConfig;
 import java.util.List;
 
@@ -19,7 +21,10 @@ public class ASLauncher {
     public DcMotorEx launcherRight;
     Servo light;
 
-    ASPIDFController launcherPIDFController = new ASPIDFController(0.0004, 0.0175, 0/*.00001*/, 0.0002);
+    ASPIDFController launcherPIDFController = new ASPIDFController(0.0004, 0.01, 0/*.00001*/, 0.000);
+
+    final double[] DIST_VALS  = {57.5, 63.8, 70.0, 78.7, 86.4, 93.4, 100.5, 107.6, 122.7, 130.6, 137.0, 141.0, 147.4, 153.3};
+    final int[] VELOCITY_VALS = {1260, 1260, 1300, 1320, 1340, 1350, 1380,  1410,  1470,  1490,  1510,  1580,  1600,  1610};
 
     int launcherTargetVelocity = 0;
     boolean safe = false;
@@ -100,5 +105,40 @@ public class ASLauncher {
 
     public int getVelocity() {
         return (int)launcherLeft.getVelocity();
+    }
+
+
+    public double getVelocity(AngleUnit angleUnit) {
+        return launcherLeft.getVelocity(angleUnit);
+    }
+
+
+    public int CalcSpeed(double currentDistance) {
+        int lowerDistIndex = 0;
+        int higherDistIndex = 0;
+        for (int i = DIST_VALS.length-1; i >= 0; i--) {
+            double distance = DIST_VALS[i];
+
+            if (distance < currentDistance) {
+                lowerDistIndex = i;
+                higherDistIndex = i + 1;
+                break;
+            }
+        }
+
+        double lowerDistVal = DIST_VALS[lowerDistIndex];
+        double higherDistVal = DIST_VALS[higherDistIndex];
+
+        double sliceLength = higherDistVal - lowerDistVal;
+        double sliceLengthCovered = currentDistance - lowerDistVal;
+        double interpMult = sliceLengthCovered / sliceLength;
+
+        int lowerVelocityVal = VELOCITY_VALS[lowerDistIndex];
+        int higherVelocityVal = VELOCITY_VALS[higherDistIndex];
+
+        int velocitySliceLength = higherVelocityVal - lowerVelocityVal;
+        int velocitySliceLengthCovered = (int)(velocitySliceLength * interpMult);
+
+        return lowerVelocityVal + velocitySliceLengthCovered;
     }
 }
